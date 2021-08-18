@@ -8,10 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import com.vijay.honeypot.entities.RequestsInfo;
 import com.vijay.honeypot.repository.RequestInfoRepo;
-
+@Component
 public class AnalyzeAttacks {
 
 	@Autowired
@@ -19,9 +20,12 @@ public class AnalyzeAttacks {
 	@Autowired
 	private JavaMailSender sender;
 
-	@Scheduled(fixedRate = 1000)
+	@Scheduled(fixedRate = 5000)
 	public void analyzeAttacks() {
 		List<RequestsInfo> reqList = requestInfoRepo.findAllByProcessedEquals(false);
+		
+		if(null != reqList)
+		{
 		Map<String, Integer> ipCountMap = new HashMap<>();
 		for (RequestsInfo reqInfo : reqList) {
 
@@ -50,5 +54,6 @@ public class AnalyzeAttacks {
 				sender.send(message);
 			}
 		}
+	}
 	}
 }
